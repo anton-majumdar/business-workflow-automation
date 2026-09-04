@@ -1,0 +1,89 @@
+{
+  "name": "Walden Logistics Fleet Capacity Pipeline",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "fleet-capacity-trigger",
+        "options": {}
+      },
+      "id": "abcd-ef-ab-cd-efabcd",
+      "name": "Webhook Trigger",
+      "type": "nn-nodes-basewebhook",
+      "typeVersion": 
+      "position": []
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value": "={{ $jsonbodyStatus }}",
+              "value": "PENDING"
+            }
+          ]
+        }
+      },
+      "id": "2b3c4d5e-6f7a-8b9c-0d1e-2f3a4b5c6d7e",
+      "name": "Filter High Priority",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position":
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": "C0123456789",
+        "text": "🚨 *ALERT: Fleet Delay Detected* 🚨\n*Tracking ID:* {{ $json.body.Tracking_ID }}\n*Route Hotspot:* {{ $json.body.Consignee }}\n*Current Weight:* {{ $json.body.Weight_KG }} KG\n*System Status:* Action Required Immediately."
+      },
+      "id": "3c4d5e6f-7a8b-9c0d-1e2f-3a4b5c6d7e8f",
+      "name": "Push to Slack",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 1,
+      "position":
+    },
+    {
+      "parameters": {
+        "title": "Dispatch Allocation: {{ $json.body.Tracking_ID }}",
+        "description": "Automated capacity overflow management.\nWeight: {{ $json.body.Weight_KG }} KG\nOrigin: Manifest Analysis Export.",
+        "dueDate": "={{ new Date().toISOString() }}"
+      },
+      "id": "4d5e6f7a-8b9c-0d1e-2f3a-4b5c6d7e8f9a",
+      "name": "Create Asana Task",
+      "type": "n8n-nodes-base.asana",
+      "typeVersion": 1,
+      "position":
+    }
+  ],
+  "connections": {
+    "Webhook Trigger": {
+      "main": [
+        [
+          {
+            "node": "Filter High Priority",
+            "type": "main",
+            "index": 
+          }
+        ]
+      ]
+    },
+    "Filter High Priority": {
+      "main": [
+        [
+          {
+            "node": "Push to Slack",
+            "type": "main",
+            "index": 
+          }
+        ],
+        [
+          {
+            "node": "Create Asana Task",
+            "type": "main",
+            "index": 
+          }
+        ]
+      ]
+    }
+  }
+}
