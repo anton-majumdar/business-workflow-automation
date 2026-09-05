@@ -1,0 +1,102 @@
+{
+  "name": "Dispatch Demo",
+  "nodes": [
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "dispatches",
+          "mode": "name"
+        },
+        "text": "={{\n  (function() {\n    const body = $json.body || {};\n    const keys = Object.keys(body).slice(0, 5);\n    let slackText = `🚨 *NEW WALDEN SYSTEM DISPATCH ALERT* 🚨\\n\\n`;\n    keys.forEach(key => {\n      const cleanLabel = key.replace(/_/g, ' ').toUpperCase();\n      slackText += `*${cleanLabel}:* ${body[key]}\\n`;\n    });\n    slackText += `\\n_Automated live operational workflow processing via n8n_`;\n    return slackText;\n  })()\n}}\n",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.7,
+      "position": [
+        208,
+        64
+      ],
+      "id": "b548f43c-3b0f-4695-9c1b-e19d40146fc7",
+      "name": "Send a message",
+      "webhookId": "8fe26556-f79d-4a4d-b166-6830bf033a53",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "D5vDX9rgLE1NquGZ",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ `🚀 WALDEN DISPATCH UNIVERSAL AUTOMATION ENGINE 🚀\n\nYour custom data payload has been dynamically parsed and formatted:\n----------------------------------------------------------------------\n🔹 DRIVER: ${$json.body.driver || 'N/A'}\n🔹 TRUCK: ${$json.body.truck || 'N/A'}\n\n⏱️ Status: Dispatched & Processed Successfully\n🟢 Pipeline Status: 200 OK\n_Automated via Walden_Efficiency Engine_` }}\n\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        208,
+        288
+      ],
+      "id": "988c5d4d-5dec-438b-a4ae-099991046587",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "universal-dispatch-demo",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -160,
+        64
+      ],
+      "id": "e44fec90-9e4a-4b86-b47f-7b010b2f6399",
+      "name": "Webhook Test",
+      "webhookId": "d5dfebd1-c771-4808-8ccc-4f71cdaf4811"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Respond to Webhook": {
+      "main": [
+        []
+      ]
+    },
+    "Webhook Test": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "2d452d48-877a-4fc0-8627-bce16161c28a",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "b2d3b40805ff0550748b2c208fbf12807372401c02895e81396a479277569f2f"
+  },
+  "nodeGroups": [],
+  "id": "bZtRafBT7iGcYdGj",
+  "tags": []
+}
